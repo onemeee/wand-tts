@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WAND: Windowed Attention and Knowledge Distillation for Efficient Autoregressive TTS</title>
+<meta name="description" content="WAND: Windowed Attention and Knowledge Distillation for Efficient Autoregressive Text-to-Speech Models. Project page with audio samples." />
+<!-- Google Analytics (GA4) — replace G-XXXXXXXXXX with your Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz@0,6..72;1,6..72&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#ffffff; --panel:#f6f8fb; --panel2:#eef2f7; --border:#e3e8ef;
+    --text:#1a2230; --muted:#5b6675; --accent:#4f6bed; --accent2:#7d5bed;
+    --ours:#4f6bed; --good:#1a8f3c;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:980px; margin:0 auto; padding:0 22px}
+  /* ---- Hero ---- */
+  header.hero{
+    text-align:center; padding:72px 0 36px;
+    background:radial-gradient(1200px 400px at 50% -10%, rgba(124,156,255,.18), transparent 60%);
+    border-bottom:1px solid var(--border);
+  }
+  .badge{
+    display:inline-block; font-size:13px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--accent); border:1px solid var(--border); border-radius:999px;
+    padding:5px 14px; margin-bottom:22px; background:var(--panel);
+  }
+  h1.title{
+    font-family:'Newsreader',serif; font-weight:600; line-height:1.18;
+    font-size:clamp(28px,5vw,46px); margin:0 0 6px;
+  }
+  h1.title .acr{
+    background:linear-gradient(120deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+    font-weight:700;
+  }
+  .subtitle{color:var(--muted); font-size:18px; max-width:720px; margin:10px auto 0}
+  .authors{margin:26px 0 6px; font-size:17px}
+  .authors .me{color:var(--text); font-weight:600}
+  .affil{color:var(--muted); font-size:14px}
+  .links{display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:26px}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:10px;
+    border:1px solid var(--border); background:var(--panel); color:var(--text);
+    font-weight:600; font-size:15px; transition:.18s;
+  }
+  .btn:hover{border-color:var(--accent); transform:translateY(-1px); text-decoration:none}
+  .btn.primary{background:linear-gradient(120deg,var(--accent),var(--accent2)); border:none; color:#fff}
+  .btn.disabled{opacity:.55; cursor:not-allowed}
+  .btn .ico{font-size:16px}
+  /* ---- Sections ---- */
+  section{padding:54px 0; border-bottom:1px solid var(--border)}
+  h2.sec{font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent);
+    margin:0 0 18px; font-weight:700}
+  .lead{font-size:17px; color:var(--text)}
+  .muted{color:var(--muted)}
+  .abstract{font-size:17px; color:#39434f; text-align:justify}
+  .grid-fig{display:grid; grid-template-columns:1fr; gap:26px; margin-top:8px}
+  figure{margin:0; background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:16px}
+  figure img{width:100%; height:auto; border-radius:8px; display:block; background:#fff}
+  figcaption{color:var(--muted); font-size:14px; margin-top:12px; text-align:center}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:26px}
+  @media(max-width:720px){.two{grid-template-columns:1fr}}
+  /* ---- Method bullets ---- */
+  .feat{display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-top:8px}
+  @media(max-width:720px){.feat{grid-template-columns:1fr}}
+  .feat .card{background:var(--panel); border:1px solid var(--border); border-radius:14px; padding:20px}
+  .feat .card h3{margin:0 0 8px; font-size:17px}
+  .feat .card p{margin:0; color:var(--muted); font-size:15px}
+  .feat .num{color:var(--accent); font-weight:800; font-size:14px; letter-spacing:.1em}
+  /* ---- Samples ---- */
+  .controls{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px}
+  .seg{display:inline-flex; background:var(--panel); border:1px solid var(--border); border-radius:10px; overflow:hidden}
+  .seg button{
+    background:transparent; color:var(--muted); border:none; padding:9px 16px;
+    font-weight:600; font-size:14px; cursor:pointer; font-family:inherit;
+  }
+  .seg button.active{background:linear-gradient(120deg,var(--accent),var(--accent2)); color:#fff}
+  table.samples{width:100%; border-collapse:collapse; font-size:14px}
+  table.samples th, table.samples td{padding:12px 10px; border-bottom:1px solid var(--border); text-align:left; vertical-align:middle}
+  table.samples th{color:var(--muted); font-weight:600; font-size:13px; text-transform:uppercase; letter-spacing:.04em}
+  table.samples td.col-id{color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums}
+  .tag-ours{display:inline-block; font-size:11px; font-weight:700; color:#fff;
+    background:linear-gradient(120deg,var(--accent),var(--accent2)); padding:2px 8px; border-radius:6px; margin-left:6px}
+  audio{width:190px; height:38px}
+  @media(max-width:720px){audio{width:140px}}
+  .colhead-ours{color:var(--ours)!important}
+  /* ---- Results table ---- */
+  .tablewrap{overflow-x:auto; border:1px solid var(--border); border-radius:12px}
+  table.restable{width:100%; border-collapse:collapse; font-size:14px; min-width:760px}
+  table.restable th, table.restable td{padding:10px 12px; text-align:center; white-space:nowrap}
+  table.restable th{color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase;
+    letter-spacing:.03em; border-bottom:2px solid var(--border); background:var(--panel)}
+  table.restable td:first-child, table.restable th:first-child,
+  table.restable td:nth-child(2), table.restable th:nth-child(2){text-align:left}
+  table.restable td{border-bottom:1px solid var(--border)}
+  table.restable tr.gt td{color:var(--muted); font-style:italic}
+  table.restable tr.grp td{border-top:1px solid var(--border)}
+  table.restable tr.ours{background:rgba(79,107,237,.07)}
+  table.restable tr.ours td:nth-child(2){color:var(--ours); font-weight:700}
+  table.restable tr.ours td:nth-child(4),
+  table.restable tr.ours td:nth-child(6),
+  table.restable tr.ours td:nth-child(10){color:var(--good); font-weight:700}
+  .dn{font-size:11px; font-weight:600; color:var(--good); vertical-align:super; margin-left:2px}
+  table.restable td[rowspan]{font-weight:600; vertical-align:middle; color:var(--text)}
+  table.restable.attn td:nth-child(2), table.restable.attn th:nth-child(2){text-align:center}
+  /* ---- Code note ---- */
+  .note{background:var(--panel2); border:1px solid var(--border); border-left:4px solid var(--accent);
+    border-radius:10px; padding:20px 22px}
+  code.k{background:var(--panel); border:1px solid var(--border); border-radius:6px; padding:2px 7px; font-size:13px}
+  /* ---- BibTeX ---- */
+  pre.bib{background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:18px;
+    overflow:auto; font-size:13px; color:#39434f}
+  footer{padding:34px 0; text-align:center; color:var(--muted); font-size:14px}
+  .ph{color:var(--accent2); font-style:italic}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="badge">Efficient Autoregressive TTS</div>
+    <h1 class="title"><span class="acr">WAND</span>: Windowed Attention and Knowledge Distillation<br/>for Efficient Autoregressive Text-to-Speech Models</h1>
+    <p class="subtitle">Adapt pretrained AR-TTS models to <b>constant</b> compute and memory &mdash; up to <b style="color:var(--good)">66.2%</b> KV-cache reduction and near-constant per-step latency, with quality preserved.</p>
+
+    <div class="authors">
+      Hanna Lee<sup>1</sup>, <a href="https://signofthefour.github.io/" target="_blank" rel="noopener">Tan Dat Nguyen</a><sup>1</sup>, Jaehoon Kang<sup>2</sup>, <a href="https://sites.google.com/view/khshim" target="_blank" rel="noopener">Kyuhong Shim</a><sup>2</sup>
+    </div>
+    <div class="affil"><sup>1</sup>Korea Advanced Institute of Science and Technology (KAIST) &nbsp;·&nbsp; <sup>2</sup>Sungkyunkwan University (SKKU)</div>
+
+    <div class="links">
+      <a class="btn primary" href="https://arxiv.org/abs/2604.08558" target="_blank" rel="noopener"><span class="ico">📄</span> Paper (arXiv)</a>
+      <a class="btn disabled" href="#" onclick="return false;"><span class="ico">&lt;/&gt;</span> Code (coming soon)</a>
+      <a class="btn" href="#samples"><span class="ico">🔊</span> Audio Samples</a>
+    </div>
+  </div>
+</header>
+
+<section id="abstract">
+  <div class="wrap">
+    <h2 class="sec">Abstract</h2>
+    <p class="abstract">
+      Recent decoder-only autoregressive text-to-speech (AR-TTS) models produce high-fidelity speech, but their
+      memory and compute costs scale quadratically with sequence length due to full self-attention. In this paper,
+      we propose <b>WAND</b>, Windowed Attention and Knowledge Distillation, a framework that adapts pretrained
+      AR-TTS models to operate with constant computational and memory complexity. WAND separates the attention
+      mechanism into two: persistent global attention over conditioning tokens and local sliding-window attention
+      over generated tokens. To stabilize fine-tuning, we employ a curriculum learning strategy that progressively
+      tightens the attention window. We further utilize knowledge distillation from a full-attention teacher to
+      recover high-fidelity synthesis quality with high data efficiency. Evaluated on three modern AR-TTS models,
+      WAND preserves the original quality while achieving up to <b style="color:var(--good)">66.2%</b> KV cache
+      memory reduction and length-invariant, near-constant per-step latency.
+    </p>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <h2 class="sec">Method</h2>
+    <p class="lead">WAND combines three ingredients to make autoregressive TTS decoding cheaper without retraining from scratch:</p>
+    <div class="feat">
+      <div class="card">
+        <div class="num">01</div>
+        <h3>Windowed Attention</h3>
+        <p>Persistent <b>global</b> attention over conditioning tokens, plus <b>local</b> sliding-window attention over generated tokens &mdash; turning a growing KV cache into a constant-memory, constant-cost operation.</p>
+      </div>
+      <div class="card">
+        <div class="num">02</div>
+        <h3>Knowledge Distillation</h3>
+        <p>The windowed student is distilled from the original full-attention teacher (skewed-KL on logits + CE on ground-truth tokens), recovering quality the hard window would otherwise lose.</p>
+      </div>
+      <div class="card">
+        <div class="num">03</div>
+        <h3>Window Curriculum</h3>
+        <p>A cosine schedule anneals the window from <code class="k">W=128 → 32</code> with a soft-to-hard mask temperature, easing the model into aggressive locality.</p>
+      </div>
+    </div>
+
+    <div class="grid-fig" style="margin-top:30px">
+      <figure>
+        <img src="static/main_figure.png" alt="Overview of the WAND framework" />
+        <figcaption>Overview of the WAND framework. Conditioning tokens (system prompt, text, reference audio) retain global
+          attention access, while generated acoustic tokens are restricted to a fixed-size sliding window of size <i>W</i>.
+          A curriculum progressively tightens the window from the early to the late training stage under a cosine schedule.</figcaption>
+      </figure>
+    </div>
+
+    <p class="lead" style="margin-top:34px"><b>Why a bounded window suffices.</b> Analyzing the attention of the original
+      full-attention models shows that the conditioning prefix and a small local window already capture
+      <b style="color:var(--good)">85&ndash;91%</b> of all attention mass &mdash; so restricting the decode region to a
+      fixed window discards only a small fraction of what the model actually uses.</p>
+
+    <div class="tablewrap" style="margin-top:14px">
+      <table class="restable attn">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Prompt&nbsp;(%)</th>
+            <th>Generated&nbsp;(%)</th>
+            <th>Local-<i>W</i>&nbsp;/&nbsp;Gen.&nbsp;(%)</th>
+            <th>Coverage&nbsp;(%)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>CosyVoice 2 (W=32)</td><td>58.5</td><td>41.5</td><td>70.2</td><td><b>87.6</b></td></tr>
+          <tr class="grp"><td>IndexTTS 1.5 (W=32)</td><td>64.6</td><td>35.4</td><td>57.1</td><td><b>84.8</b></td></tr>
+          <tr class="grp"><td>SparkTTS (W=64)</td><td>47.9</td><td>52.1</td><td>82.8</td><td><b>91.0</b></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:13px;margin-top:10px">Attention of vanilla full-attention models during decoding,
+      averaged over 5 long utterances. Local-<i>W</i>/Gen. is the share within a window of size <i>W</i> among generated tokens;
+      Coverage&nbsp;= Prompt + Generated&nbsp;×&nbsp;Local/Gen.</p>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <h2 class="sec">Results</h2>
+    <p class="lead">On three architecturally diverse backbones, WAND turns a linearly-growing KV cache into a bounded one
+      &mdash; up to <b style="color:var(--good)">66.2%</b> cache reduction and <b style="color:var(--good)">1.89×</b> speedup &mdash;
+      while UTMOS, NMOS, SSIM, and WER stay on par with (or better than) the full-attention baseline.</p>
+
+    <div class="tablewrap" style="margin-top:18px">
+      <table class="restable">
+        <thead>
+          <tr>
+            <th>Model</th><th>Attention</th>
+            <th>KV&nbsp;Cache&nbsp;↓</th><th>Reduction&nbsp;↑</th>
+            <th>GFLOPs&nbsp;↓</th><th>Speedup&nbsp;↑</th>
+            <th>UTMOS&nbsp;↑</th><th>NMOS&nbsp;↑</th><th>SSIM&nbsp;↑</th><th>WER&nbsp;↓</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="gt">
+            <td>Ground truth</td><td>&ndash;</td>
+            <td>&ndash;</td><td>&ndash;</td><td>&ndash;</td><td>&ndash;</td>
+            <td>3.53</td><td>3.79</td><td>100</td><td>1.44</td>
+          </tr>
+          <tr class="grp"><td rowspan="2">CosyVoice 2-0.5B</td><td>Full (W=∞)</td>
+            <td>10.48 MB</td><td>&ndash;</td><td>11.55</td><td>&ndash;</td>
+            <td>4.18</td><td>4.01</td><td>94.6</td><td>1.94</td></tr>
+          <tr class="ours"><td>WAND (W=32)</td>
+            <td>5.25 MB</td><td>49.9%</td><td>7.44</td><td>1.57×</td>
+            <td>4.21</td><td>4.02</td><td>94.5</td><td>1.72<span class="dn">−0.22</span></td></tr>
+          <tr class="grp"><td rowspan="2">IndexTTS 1.5</td><td>Full (W=∞)</td>
+            <td>38.44 MB</td><td>&ndash;</td><td>6.18</td><td>&ndash;</td>
+            <td>3.97</td><td>4.13</td><td>94.4</td><td>0.98</td></tr>
+          <tr class="ours"><td>WAND (W=32)</td>
+            <td>13.01 MB</td><td>66.2%</td><td>3.28</td><td>1.89×</td>
+            <td>3.98</td><td>4.13</td><td>94.4</td><td>0.91<span class="dn">−0.07</span></td></tr>
+          <tr class="grp"><td rowspan="2">SparkTTS-0.5B</td><td>Full (W=∞)</td>
+            <td>18.09 MB</td><td>&ndash;</td><td>48.12</td><td>&ndash;</td>
+            <td>3.93</td><td>3.94</td><td>92.6</td><td>3.27</td></tr>
+          <tr class="ours"><td>WAND (W=64)</td>
+            <td>7.15 MB</td><td>60.5%</td><td>31.74</td><td>1.51×</td>
+            <td>3.93</td><td>3.97</td><td>92.8</td><td>3.11<span class="dn">−0.16</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:13px;margin-top:10px">Seed-TTS-eval <code class="k">test-en</code>. Efficiency (KV cache, GFLOPs)
+      accumulated for 10&nbsp;s of audio; KV cache in fp32. All WAND models fine-tuned on 100&nbsp;h of English data for 1 epoch.</p>
+
+    <div class="grid-fig" style="margin-top:34px">
+      <figure>
+        <img src="static/latency_paper.png" alt="Per-step decoding latency" style="max-width:680px;margin:0 auto" />
+        <figcaption>Per-step decoding latency vs. number of generated tokens. Full attention grows linearly (𝒪(n) per step),
+          while sliding-window attention stays constant (𝒪(1) per step) regardless of output length.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section id="samples">
+  <div class="wrap">
+    <h2 class="sec">Audio Samples</h2>
+    <p class="lead">Zero-shot voice cloning on the <span class="muted">Seed-TTS test-en</span> set. For each backbone we compare the
+      original model against its <b style="color:var(--ours)">WAND</b> (windowed + distilled) variant. Ground truth is the target speaker reference.</p>
+
+    <div class="controls">
+      <div class="seg" id="backbone-seg">
+        <button class="active" data-bb="cosyvoice2">CosyVoice 2</button>
+        <button data-bb="indextts">IndexTTS</button>
+        <button data-bb="sparktts">Spark-TTS</button>
+      </div>
+    </div>
+
+    <table class="samples">
+      <thead>
+        <tr>
+          <th class="col-id">#</th>
+          <th>Ground Truth</th>
+          <th id="th-base">Baseline</th>
+          <th class="colhead-ours" id="th-ours">WAND (ours)</th>
+        </tr>
+      </thead>
+      <tbody id="samples-body"></tbody>
+    </table>
+    <p class="muted" style="font-size:13px;margin-top:14px">Showing 12 representative samples. Full sample sets are released with the code.</p>
+  </div>
+</section>
+
+<section id="code">
+  <div class="wrap">
+    <h2 class="sec">Code</h2>
+    <div class="note">
+      <p style="margin:0 0 8px"><b>Code coming soon.</b> The implementation is being cleaned up and will be released here together with
+        training scripts, distillation recipes, and the full evaluation suite.</p>
+      <p style="margin:0" class="muted">In the meantime, the <code class="k">WAND</code> recipe applies on top of public checkpoints of
+        CosyVoice&nbsp;2, IndexTTS, and Spark-TTS. Check back, or watch this page for the release.</p>
+    </div>
+  </div>
+</section>
+
+<section id="cite">
+  <div class="wrap">
+    <h2 class="sec">BibTeX</h2>
+    <pre class="bib">@inproceedings{lee2026wand,
+  title     = {WAND: Windowed Attention and Knowledge Distillation for
+               Efficient Autoregressive Text-to-Speech Models},
+  author    = {Lee, Hanna and Nguyen, Tan Dat and Kang, Jaehoon and Shim, Kyuhong},
+  booktitle = {Proc. Interspeech 2026},
+  year      = {2026}
+}</pre>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>WAND project page · © 2026 · Audio samples from the Seed-TTS test-en benchmark.</p>
+  </div>
+</footer>
+
+<script>
+const VERSIONS = {
+  cosyvoice2: {base:'cosyvoice2', ours:'cosyvoice2_wand', label:'CosyVoice 2'},
+  indextts:   {base:'indextts',   ours:'indextts_wand',   label:'IndexTTS'},
+  sparktts:   {base:'sparktts',   ours:'sparktts_wand',   label:'Spark-TTS'},
+};
+let SAMPLES = [];
+let current = 'cosyvoice2';
+
+function audioCell(path){
+  return `<td><audio controls preload="none" src="${path}"></audio></td>`;
+}
+
+function render(){
+  const v = VERSIONS[current];
+  document.getElementById('th-base').textContent = v.label;
+  const body = document.getElementById('samples-body');
+  body.innerHTML = SAMPLES.map((id, i) => {
+    const gt   = `audio/groundtruth/${id}.wav`;
+    const base = `audio/${v.base}/${id}.wav`;
+    const ours = `audio/${v.ours}/${id}.wav`;
+    return `<tr>
+      <td class="col-id">${String(i+1).padStart(2,'0')}</td>
+      ${audioCell(gt)}
+      ${audioCell(base)}
+      ${audioCell(ours)}
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('backbone-seg').addEventListener('click', e => {
+  const btn = e.target.closest('button'); if(!btn) return;
+  current = btn.dataset.bb;
+  document.querySelectorAll('#backbone-seg button').forEach(b => b.classList.toggle('active', b===btn));
+  render();
+});
+
+fetch('samples.json')
+  .then(r => r.json())
+  .then(list => { SAMPLES = list; render(); })
+  .catch(() => {
+    document.getElementById('samples-body').innerHTML =
+      '<tr><td colspan="4" class="muted">Could not load samples.json — serve this folder over HTTP (see README).</td></tr>';
+  });
+</script>
+</body>
+</html>
